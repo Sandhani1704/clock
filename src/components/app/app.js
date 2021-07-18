@@ -5,13 +5,12 @@ import React, { useState, useEffect } from 'react';
 function App() {
 
   const [clockTime, setClockTime] = useState(new Date());
-  const [timerBack, setTimerBack] = React.useState(false);
-  const [currentTime, setCurrentTime] = React.useState('');
+  const [timerBack, setTimerBack] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
+  const [reset, setReset] = useState(false);
 
-  const date = new Date().toISOString();
   const formatDigits = (num) => (num < 10 ? `0${num}` : `${num}`);
 
-  // обычные часы
   useEffect(() => {
     if (!timerBack) {
 
@@ -20,42 +19,48 @@ function App() {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [timerBack, date]);
+    if (timerBack) {
 
-  const goClockBack = () => {
-    setTimerBack(true)
-    const interval = setInterval(() => {
-      setClockTime((clockTime) => new Date(clockTime.getTime() - 1000));
-    }, 1000);
-    return () => clearInterval(interval);
+      const interval = setInterval(() => {
+        setClockTime((clockTime) => new Date(clockTime.getTime() - 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timerBack]);
+
+  const getCurrentTime = () => {
+    setReset(true)
+    setCurrentTime(new Date().toLocaleTimeString());
   }
 
   const hours = formatDigits(clockTime.getHours());
   const minutes = formatDigits(clockTime.getMinutes());
   const seconds = formatDigits(clockTime.getSeconds());
 
-  const getСurrentTime = () => {
-    setCurrentTime(new Date().toLocaleTimeString());
-  }
-
   return (
     <div className="app">
       <div className="clock__digits">
         <span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
       </div>
-      <p>{currentTime}</p>
+      {reset && <p>current time: {currentTime}</p>}
       <div className="clock__buttons">
         <Button
           variant="primary"
           className="m-2 mr-3 btn btn-primary"
-          onClick={goClockBack} >
-          back
+          onClick={() => setTimerBack((timerBack) => !timerBack)}>
+          {timerBack ? 'Go Clock Forward' : 'Go Clock Back'}
         </Button>
         <Button
           variant="primary"
           className="m-2 mr-3 btn btn-primary"
-          onClick={getСurrentTime} >
-          getСurrentTime
+          onClick={getCurrentTime} >
+          Get Current Time
+        </Button>
+        <Button
+          variant="primary"
+          className="m-2 mr-3 btn btn-primary"
+          onClick={() => setClockTime(new Date())} >
+          Reset
         </Button>
       </div>
     </div>
