@@ -6,9 +6,8 @@ function App() {
 
   const [clockTime, setClockTime] = useState(new Date());
   const [timerBack, setTimerBack] = useState(false);
-  const [currentTime, setCurrentTime] = useState('');
-  const [reset, setReset] = useState(false);
-
+  const [currentTime, setCurrentTime] = useState([]);
+  
   const formatDigits = (num) => (num < 10 ? `0${num}` : `${num}`);
 
   useEffect(() => {
@@ -29,8 +28,7 @@ function App() {
   }, [timerBack]);
 
   const getCurrentTime = () => {
-    setReset(true)
-    setCurrentTime(new Date().toLocaleTimeString());
+    setCurrentTime([...currentTime, new Date().toLocaleTimeString()]);
   }
 
   const hours = formatDigits(clockTime.getHours());
@@ -42,7 +40,9 @@ function App() {
       <div className="clock__digits">
         <span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
       </div>
-      {reset && <p>current time: {currentTime}</p>}
+      {currentTime.map((item, key) => (
+        <p key={key}>time: {item}</p>
+      ))}
       <div className="clock__buttons">
         <Button
           variant="primary"
